@@ -103,7 +103,17 @@ This will show you 2 instances in starting or running state.
 Lets try and scale it down and see if our request processing is interupted. On a second terminal, lets run a loop and keep requesting status, until we get error. So, if all works well, this loop will keep going, until we interrupt it.
 
 ```bash
-CTR=0; while test `curl -s http://pcf-demo-2018.cfapps.io/actuator/health | jq -r .status` = 'UP' ; do ((CTR++)); echo "Request#: $CTR"; done
+CTR=0; while true 
+do
+    ((CTR++))
+    reponse=
+    if [ "`curl -s http://pcf-demo-2018.cfapps.io/actuator/health 2> /dev/null`" = '{"status":"UP"}' ]
+    then 
+        echo "R# $CTR: PASS" 
+    else 
+        echo "R# $CTR: FAIL"
+    fi
+done
 ```
 
 Now, lets scale down application
@@ -130,12 +140,10 @@ git checkout greetings
 On a second console, run forllowing command to test custom greeting api
 
 ```bash
-curl -s http://localhost:8080/greetings?name=Yogendra
+curl -s 'http://localhost:8080/greetings?name=Yogendra'
 ```
 
-This will give you a greetings with server time.
-
-Lets take this to PCF. Its just a push away
+This will give you a greetings with server time. Lets take this to PCF. Its just a push away
 
 ```bash
 cf push
@@ -168,7 +176,7 @@ Broadly:
 Solution is on persistence branch, so check it out, build and run
 
 ``` bash
-git checkout persistence
+git checkout todo
 ./mvnw clean install spring-boot:run
 ```
 
