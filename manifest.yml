@@ -1,0 +1,10 @@
+applications:
+- name: pcf-demo
+  memory: 2048M
+  instances: 1
+  path: target/pcf-demo-1.0.0.RELEASE.jar
+  buildpack: https://github.com/cloudfoundry/java-buildpack
+  routes:
+  - route: pcf-demo-2018.cfapps.io
+  env:
+      SPRING_PROFILES_ACTIVE : cloud

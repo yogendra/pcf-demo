@@ -1,0 +1,12 @@
+spring:
+  profiles: local
+
+---
+spring:
+  profiles: cloud
+---
+info:
+  app:
+    name: PCF Demo
+    description: Simple PCF Demo application. ENhances iteratively and deploys on PCF
+    version: 1.0.0.RELEASE
