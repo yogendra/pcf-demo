@@ -195,10 +195,80 @@ This all works fine. Before we proceed to deploy on cloud, we need to provision 
 
 #### Database Service
 
-```bash
+We will create a simple To Do Api. This api will be able to crate and query ToDo items. Get list of all all items:
 
-cf create-service
+```bash
+curl http://localhost:8080/todos
 ```
+
+Create a new todo item:
+
+```bash
+curl http://localhost:8080/todos -d '{"title": "Hello", "done": false}'
+```
+
+Delete a todo item
+
+```bash
+curl http://localhost:8080/todos/1 -X DELETE
+```
+
+We can use in memory database (H2) for testing locally. On cloud we will use ElephantSQL. Its a derivetive of PostgreSQL.
+
+
+We will use ElephantSQL service. This is a postgres based database service. Lets search for it first.
+
+```bash
+cf marketplace -s elephantsql
+
+...
+
+service plan   description                                            free or paid
+turtle         4 concurrent connections, 20MB Storage                 free
+panda          20 concurrent connections, 2GB Storage                 paid
+hippo          300 concurrent connections, 100 GB Storage             paid
+elephant       300 concurrent connections, 1000 GB Storage, 500Mbps   paid
+```
+
+We an use turtle service plan for our demo. Let create a service first:
+
+```bash
+cf create-service elephantsql turtle pcf-demo-db
+```
+
+After creating service, you can need to bind it to your application.
+
+```bash
+cf bind-service pcf-demo pcf-demo-db
+```
+
+After binding the service, you need to restart application so that it can pickup bindings
+
+```bash
+cf restart pcf-demo
+```
+
+
+#### Run Persistence on PCF
+
+We have updated application to allow posting and querying ToDo. We also have a bound service for SQL on PCF. Now we will push our application changes to PCF.
+
+```bash
+cf push pcf-demo
+``` 
+
+Once its up and running, you can test your API with following commands:
+```bash
+curl -s -H content-type:application/json https://pcf-demo-2018.cfapps.io/todos -d '{"title": "Bye", "done":false}'
+```
+
+List all ToDo items:
+
+```base
+curl https://pcf-demo-2018.cfapps.io
+```
+
+
 
 
 [pcf-signup]: https://try.run.pivotal.io/homepage
